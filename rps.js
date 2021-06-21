@@ -5,35 +5,48 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-
 let wins = 0;
 let losses = 0;
 let ties = 0;
 
-console.log("Welcome to Rock/Paper/Scissors\n");
-console.log("  Type 'r' for Rock");
-console.log("  Type 'p' for Paper");
-console.log("  Type 's' for Scissors");
-console.log("  Type 'q' to quit\n");
+// console.log("Welcome to Rock/Paper/Scissors\n");
+// console.log("  Type 'r' for Rock");
+// console.log("  Type 'p' for Paper");
+// console.log("  Type 's' for Scissors");
+// console.log("  Type 'q' to quit\n");
 
 function processCommand() {
 
     console.log(`${wins} - ${losses} - ${ties}`);
 
-    rl.question('> ', (cmd) => {
+    rl.question('Type r, p, s, l, or sp (h for help, q for quit): ', (cmd) => {
         cmd = cmd.toLowerCase();
 
         // Calculate computer's move
         let cpu;
-        const randomNum = Math.floor(Math.random() * 3);
+        const randomNum = Math.floor(Math.random() * 5);
         if (randomNum === 0) cpu = "r";
         if (randomNum === 1) cpu = "p";
         if (randomNum === 2) cpu = "s";
+        if (randomNum === 3) cpu = "l";
+        if (randomNum === 4) cpu = "sp";
+
+        if(getScore(cmd,cpu)===-1){
+            losses++
+            console.log("You Lose")
+        }
+        else if(getScore(cmd,cpu)===0){
+            ties++
+            console.log("You Tied")
+        }
+        else {
+            console.log("You Win")
+            wins++
+        }
 
         console.log(`You pick ${cmd}, computer picks ${cpu}.`)
 
         if (cmd === 'h') {
-
             console.log("Help:\n");
             console.log("  Type 'r' for Rock");
             console.log("  Type 'p' for Paper");
@@ -43,54 +56,53 @@ function processCommand() {
         } else if (cmd === 'q') {
             rl.close();
             return;
-
-        } else if (cmd === 'r') {
-            if (cpu === 'r') {
-                console.log("You tie.\n");
-                ties++;
-            } else if (cpu === 'p') {
-                console.log("You lose...\n");
-                losses++;
-            } else if (cpu === 's') {
-                console.log("You win!\n");
-                wins++;
-            }
-
-        } else if (cmd === 'p') {
-            if (cpu === 'p') {
-                console.log("You tie.\n");
-                ties++;
-            } else if (cpu === 's') {
-                console.log("You lose...\n");
-                losses++;
-            } else if (cpu === 'r') {
-                console.log("You win!\n");
-                wins++;
-            }
-
-        } else if (cmd === 's') {
-            if (cpu === 's') {
-                console.log("You tie.\n");
-                ties++;
-            } else if (cpu === 'r') {
-                console.log("You lose...\n");
-                losses++;
-            } else if (cpu === 'p') {
-                console.log("You win!\n");
-                wins++;
-            }
-
-        } else {
-            console.log("Invalid command.\n");
-            console.log("  Type 'r' for Rock");
-            console.log("  Type 'p' for Paper");
-            console.log("  Type 's' for Scissors");
-            console.log("  Type 'q' to quit\n");
         }
 
         processCommand();
     });
+
+
+    let getScore = (playerSign,cpuSign) => {
+
+        let signs = {
+            "r":{
+                "p":-1,
+                "s":1,
+                "r":0,
+                "sp":-1,
+                "l":1
+            },
+            "p": {
+                "p": 0,
+                "s": -1,
+                "r": 1,
+                "sp":1,
+                "l":-1
+            },
+            "s": {
+                "p": 1,
+                "s": 0,
+                "r": -1,
+                "sp":-1,
+                "l":1
+            },
+            "sp": {
+                "p": -1,
+                "s": 1,
+                "r": 1,
+                "sp":0,
+                "l":-1
+            },
+            "l": {
+                "p": 1,
+                "s": -1,
+                "r": -1,
+                "sp":1,
+                "l":0
+            }
+        }
+        return signs[playerSign][cpuSign]
+    }
 }
 
 processCommand();
-
